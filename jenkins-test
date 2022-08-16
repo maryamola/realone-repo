@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    environment {
+        VERSION = "${env.BUILD_ID}"
+    }
+    stages {
+        stage('Git checkout') {
+            steps {
+                git 'https://github.com/Ilumiles/realone-repo.git'
+            }
+        }
+        
+        stage('Build with maven') {
+            steps {
+                sh 'cd SampleWebApp && mvn clean install'
+            }
+        }
+        
+             stage('Test') {
+            steps {
+                sh 'cd SampleWebApp && mvn test'
+            }
+        
+            }
+       
+        stage("docker build & docker push"){
+            steps{
+                script{
+                    withCredentials([string(credentialsId: 'docker-nexus', variable: 'nexus')]) {
+                             sh '''
+                                docker build -t 35.172.211.105:8083/springapp:${VERSION} .
+                                docker login -u admin -p $nexus 35.172.211.105:8083
+                                docker push 35.172.211.105:8083/springapp:${VERSION}
+                                docker rmi 35.172.211.105:8083/springapp:${VERSION}
+                                 
+                            '''
+                       }
+                    }
+                }
+            }
+
+
+        }
+        
+    }
+}
