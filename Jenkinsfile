@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Git checkout') {
             steps {
-                git 'https://github.com/Ilumiles/realone-repo.git'
+                git 'https://github.com/maryamola/realone-repo.git'
             }
         }
         
@@ -35,7 +35,7 @@ pipeline {
         }
         stage('Deploy to tomcat') {
            steps {
-               deploy adapters: [tomcat9(credentialsId: 'tomcat-crd', path: '', url: 'http://3.92.184.198:8080/')], contextPath: 'web', war: '**/*.war'
+               deploy adapters: [tomcat9(credentialsId: '44d0c8f7-c308-43c1-b5cb-5470623a779a', path: '', url: 'http://3.92.184.198:8080/')], contextPath: 'myapp', war: '**/*.war'
                }
         }
     }
